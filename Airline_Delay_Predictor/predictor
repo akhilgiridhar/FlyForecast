@@ -45,7 +45,7 @@ def trainXGBmodel():
     print(f"XGB accuracy: {accuracy * 100:.2f}%")
 
     # Serialize and save the model
-    model_filename = 'trained_model.pkl'  # Choose a file name and extension
+    model_filename = 'xgb_trained_model.pkl'  # Choose a file name and extension
     joblib.dump(model, model_filename)
 
 def trainLogRegModel():
@@ -62,20 +62,29 @@ def trainLogRegModel():
     accuracy = accuracy_score(y_test, y_pred)
     print(f"Logistical Regression accuracy: {accuracy * 100:.2f}%")
 
+    # Serialize and save the model
+    model_filename = 'LogReg_trained_model.pkl'  # Choose a file name and extension
+    joblib.dump(model, model_filename)
+
 def get_prediction(cig, dew, slp, tmp, vis, wind_speed):
     # Load the model
-    model = joblib.load('trained_model.pkl')
+    modelXGB = joblib.load('xgb_trained_model.pkl')
+    modelLogReg = joblib.load('LogReg_trained_model.pkl')
 
     # Create a DMatrix
     data = [[cig, dew, slp, tmp, vis, wind_speed]]
     dmatrix = xgb.DMatrix(data)
 
     # Make a prediction
-    prediction = model.predict(dmatrix)
+    xgb_prediction = modelXGB.predict(dmatrix)
+    logreg_prediction = modelLogReg.predict(data)
 
-    # Convert the prediction to binary
-    prediction_binary = 1 if prediction > 0.5 else 0
+    #print predictions of both models with probabilities
+    print(f"XGB prediction: {xgb_prediction}")
+    print(f"LogReg prediction: {logreg_prediction}")
 
+    # Return the binary prediction based on majority vote
+    prediction_binary = 1 if (xgb_prediction + logreg_prediction) >= 1 else 0
     return prediction_binary
 
 #write main function that calls the above functions
@@ -83,3 +92,8 @@ if __name__ == '__main__':
     trainXGBmodel()
     trainLogRegModel()
     print(get_prediction(2, 3, 4, 5, 6, 7))
+
+
+
+
+    
