@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from Airline_Delay_Predictor import predictor
+import predictor
 
 app = Flask(__name__)
 
