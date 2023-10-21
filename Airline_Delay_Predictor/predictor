@@ -1,0 +1,41 @@
+# Import necessary libraries
+import xgboost as xgb
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Load your custom dataset (replace path with the actual dataset file path)
+data = pd.read_csv('your_dataset.csv')
+
+# Assuming that the last column of your dataset is the target variable and the rest are features
+X = data.iloc[:, :-1]  # Features
+y = data.iloc[:, -1]   # Target variable
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a DMatrix (XGBoost's internal data structure) for training and testing data
+dtrain = xgb.DMatrix(X_train, label=y_train)
+dtest = xgb.DMatrix(X_test, label=y_test)
+
+# Define the parameters for the XGBoost model
+params = {
+    'objective': 'binary:logistic',  # For binary classification
+    'max_depth': 3,                  # Maximum depth of trees
+    'eta': 0.1,                      # Learning rate
+    'eval_metric': 'logloss'         # Evaluation metric
+}
+
+# Train the XGBoost model
+num_round = 100  # Number of boosting rounds
+model = xgb.train(params, dtrain, num_round)
+
+# Make predictions on the test data
+y_pred = model.predict(dtest)
+
+# Convert the probabilities to binary predictions
+y_pred_binary = [1 if p > 0.5 else 0 for p in y_pred]
+
+# Calculate and print the accuracy
+accuracy = accuracy_score(y_test, y_pred_binary)
+print(f"Accuracy: {accuracy * 100:.2f}%")
