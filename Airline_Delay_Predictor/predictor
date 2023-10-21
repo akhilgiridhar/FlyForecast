@@ -3,39 +3,63 @@ import xgboost as xgb
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+import joblib
 
-# Load your custom dataset (replace path with the actual dataset file path)
-data = pd.read_csv("C:/Users/rohan/Downloads/airline_delay_dataset/Flight-weather-delay.csv")
 
-# Assuming that the last column of your dataset is the target variable and the rest are features
-X = data.iloc[:, :-1]  # Features
-y = data.iloc[:, -1]   # Target variable
+def trainmodel():
 
-# Split the dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Load your custom dataset (replace path with the actual dataset file path)
+    data = pd.read_csv("C:/Users/rohan/Downloads/airline_delay_dataset/Flight-weather-delay.csv")
 
-# Create a DMatrix (XGBoost's internal data structure) for training and testing data
-dtrain = xgb.DMatrix(X_train, label=y_train)
-dtest = xgb.DMatrix(X_test, label=y_test)
+    # Assuming that the last column of your dataset is the target variable and the rest are features
+    X = data.iloc[:, :-1]  # Features
+    y = data.iloc[:, -1]   # Target variable
 
-# Define the parameters for the XGBoost model
-params = {
-    'objective': 'binary:logistic',  # For binary classification
-    'max_depth': 3,                  # Maximum depth of trees
-    'eta': 0.1,                      # Learning rate
-    'eval_metric': 'logloss'         # Evaluation metric
-}
+    # Split the dataset into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train the XGBoost model
-num_round = 100  # Number of boosting rounds
-model = xgb.train(params, dtrain, num_round)
+    # Create a DMatrix (XGBoost's internal data structure) for training and testing data
+    dtrain = xgb.DMatrix(X_train, label=y_train)
+    dtest = xgb.DMatrix(X_test, label=y_test)
 
-# Make predictions on the test data
-y_pred = model.predict(dtest)
+    # Define the parameters for the XGBoost model
+    params = {
+        'objective': 'binary:logistic',  # For binary classification
+        'max_depth': 3,                  # Maximum depth of trees
+        'eta': 0.1,                      # Learning rate
+        'eval_metric': 'logloss'         # Evaluation metric
+    }
 
-# Convert the probabilities to binary predictions
-y_pred_binary = [1 if p > 0.5 else 0 for p in y_pred]
+    # Train the XGBoost model
+    num_round = 100  # Number of boosting rounds
+    model = xgb.train(params, dtrain, num_round)
 
-# Calculate and print the accuracy
-accuracy = accuracy_score(y_test, y_pred_binary)
-print(f"Accuracy: {accuracy * 100:.2f}%")
+    # Make predictions on the test data
+    y_pred = model.predict(dtest)
+
+    # Convert the probabilities to binary predictions
+    y_pred_binary = [1 if p > 0.5 else 0 for p in y_pred]
+
+    # Calculate and print the accuracy
+    accuracy = accuracy_score(y_test, y_pred_binary)
+    print(f"Accuracy: {accuracy * 100:.2f}%")
+
+    # Serialize and save the model
+    model_filename = 'trained_model.pkl'  # Choose a file name and extension
+    joblib.dump(model, model_filename)
+
+def get_prediction(cig, dew, slp, tmp, vis, wind_speed):
+    # Load the model
+    model = joblib.load('trained_model.pkl')
+
+    # Create a DMatrix
+    data = [[cig, dew, slp, tmp, vis, wind_speed]]
+    dmatrix = xgb.DMatrix(data)
+
+    # Make a prediction
+    prediction = model.predict(dmatrix)
+
+    # Convert the prediction to binary
+    prediction_binary = 1 if prediction > 0.5 else 0
+
+    return prediction_binary
