@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 )
 
@@ -16,11 +18,6 @@ type Input struct {
 	Tmp       int `json:"tmp"`
 	Vis       int `json:"vis"`
 	Wnd_speed int `json:"wnd_speed"`
-}
-
-type api_params struct {
-	City string `json:"city"`
-	Time int    `json:"time"`
 }
 
 type Output struct {
@@ -77,26 +74,20 @@ func getPrediction(data Input) Output {
 	return Output{Delay: response["prediction"]}
 }
 
-func getValidIntInput(prompt string) string {
-	var value string
-	for {
-		fmt.Print(prompt)
-		_, err := fmt.Scanf("%d\n", &value)
-		if err == nil {
-			break
-		} else {
-			fmt.Println("Please enter a valid string.")
-		}
-	}
-	return value
-}
-
 func main() {
 	var input Input
-	// var api_params Params
-	var city, time string
-	city = getValidIntInput("Enter City: ")
-	time = getValidIntInput("Enter Time: ")
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("Enter City: ")
+	city, _ := reader.ReadString('\n')
+	city = city[:len(city)-1] // Remove the trailing newline
+
+	fmt.Print("Enter Time: ")
+	time, _ := reader.ReadString('\n')
+	time = time[:len(time)-1] // Remove the trailing newline
+
+	fmt.Println("City:", city)
+	fmt.Println("Time:", time)
 
 	input = callParsedata(city, time)
 

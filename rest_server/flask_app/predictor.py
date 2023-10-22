@@ -8,6 +8,7 @@ import joblib
 
 
 def get_prediction(dew, slp, tmp, vis, wind_speed):
+    print("hhhhhhhh")
     # # Load the model
     # modelXGB = joblib.load('xgb_trained_model.pkl')
     # modelLogReg = joblib.load('LogReg_trained_model.pkl')
