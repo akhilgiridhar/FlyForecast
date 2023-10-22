@@ -9,9 +9,13 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
+	"net"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"rest_server/go_app/utils"
+
 )
 
 type Input struct {
@@ -133,6 +137,30 @@ func handlePredictDelay(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responseData)
 }
 
+func getIP() string{
+	// Get the host's IP addresses
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return("Error:") + err.Error()
+	}
+
+	// Find the first non-loopback IP address
+	var hostIP string
+	for _, addr := range addrs {
+		ipNet, ok := addr.(*net.IPNet)
+		if ok && !ipNet.IP.IsLoopback() && ipNet.IP.To4() != nil {
+			hostIP = ipNet.IP.String()
+			break
+		}
+	}
+
+	if hostIP != "" {
+		return hostIP
+	} else {
+		return ("Unable to determine the host's IP address.")
+	}
+}
+
 func main() {
 	// var input Input
 	// reader := bufio.NewReader(os.Stdin)
@@ -148,8 +176,20 @@ func main() {
 	// input = callParsedata(city, time)
 	// output := getPrediction(input)
 	// print_output(output.Delay)
+	client := utils.SetupHedera()
+	var topicID = utils.GetTopicInfo("0.0.5739611")
+	utils.SubscribeToTopic(client, topicID)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/predict-delay", handlePredictDelay).Methods("POST")
+
+	// Get the current time
+	currentTime := time.Now()
+
+	// Format the time as a string
+	timeString := currentTime.Format("2006-01-02 15:04:05")
+	transmitString := "Accessing predictor.py at " + timeString + " from IP address " + getIP()
+	utils.TransmitMessage(transmitString, client, topicID)
 
 	// Handle CORS
 	handler := cors.Default().Handler(r)
