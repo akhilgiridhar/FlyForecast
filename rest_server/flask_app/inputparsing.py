@@ -1,4 +1,6 @@
 import requests
+import json
+import sys
 
 # Define your API key
 api_key = 'f69006857c004d90ad0222208232110'  # Replace with your actual API key
@@ -30,9 +32,16 @@ def parsedata(city, time):
         slp = data['forecast']['forecastday'][0]['hour'][time]['pressure_mb'] #hour array will change based off approximate ti
         vis = data['forecast']['forecastday'][0]['hour'][time]['vis_km'] * 1000 #hour array will change based off approximate ti
         temperature_forecast = data['forecast']['forecastday'][0]['hour'][time]['temp_c'] #hour array will change based off approximate ti
-        print(dewpoint, slp, temperature_forecast, vis, Wind_speed)
+        data = {
+        "dew": dewpoint,
+        "slp": slp,
+        "tmp": temperature_forecast,
+        "vis": vis,
+        "wnd_speed": Wind_speed
+        }
     else:
         print(f"Request failed with status code: {response.status_code}")
 
+    return json.dumps(data)
 # if __name__ == '__main__':
 #     parsedata('New York', 17)
