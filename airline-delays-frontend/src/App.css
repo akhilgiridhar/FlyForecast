@@ -13,6 +13,24 @@
   }
 }
 
+body {
+  background-color: #3f3939; /* light gray background */
+  color: #f4f1f1; /* dark gray text */
+  font-family: 'Arial', sans-serif;
+}
+
+
+
+
+
+.centered-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+}
+
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -35,4 +53,13 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: white; /* This makes the default border color white */
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline,
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: white; /* This ensures the border remains white on hover and when focused */
 }
