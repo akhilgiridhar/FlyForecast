@@ -16,9 +16,8 @@ ML model based off of: [link to dataset]
 These instructions detail how to install the ASL Alphabet dataset. 
 Other datasets can be used by creating a class which inherits from `torch.utils.data.Dataset`.
 
-1. Install the [ASL Alphabet Dataset](https://www.kaggle.com/datasets/grassknoted/asl-alphabet) to `\data\`
-2. Remove the `SPACE`, `DELETE`, and `NOTHING` folders from `\data\` as they are unused 
-3. Convert the dataset to landmarks by calling `generateLandmarkDataset` in `train.py`
+1. Install the [dataset](https://github.com/nitilaksha1/Analysis-of-Flight-Delay-and-Weather-Dataset/blob/master/machine-learning/Flight-weather-delay-correlation-data.csv) to `\data\`
+2. Remove the `FLIGHT_ID` column and move the  `WEATHER_DELAY` column to the end from `\data\` as they are unused 
 
 ## Usage
 
