@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -9,8 +8,10 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
+
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type Input struct {
@@ -99,29 +100,60 @@ func getPrediction(data Input) Output {
 	if err := json.Unmarshal(body, &response); err != nil {
 		log.Fatalf("Error unmarshalling response: %v", err)
 	}
-
 	return Output{Delay: response["prediction"]}
 }
 
+func handlePredictDelay(w http.ResponseWriter, r *http.Request) {
+	// Decode the input data from request body
+	var requestData map[string]string
+	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
+		http.Error(w, "Bad request data", http.StatusBadRequest)
+		return
+	}
+	city, ok1 := requestData["city"]
+	time, ok2 := requestData["time"]
+
+	if !ok1 || !ok2 {
+		http.Error(w, "Missing city or time", http.StatusBadRequest)
+		return
+	}
+
+	// Get the parsed weather data
+	parsedData := callParsedata(city, time)
+
+	// Predict using the weather data
+	predictionOutput := getPrediction(parsedData)
+
+	// Return the prediction
+	responseData := map[string]int{
+		"Delay": predictionOutput.Delay,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseData)
+}
+
 func main() {
-	var input Input
-	reader := bufio.NewReader(os.Stdin)
+	// var input Input
+	// reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("Enter City: ")
-	city, _ := reader.ReadString('\n')
-	city = city[:len(city)-1] // Remove the trailing newline
+	// fmt.Print("Enter City: ")
+	// city, _ := reader.ReadString('\n')
+	// city = city[:len(city)-1] // Remove the trailing newline
 
-	fmt.Print("Enter Time: ")
-	time, _ := reader.ReadString('\n')
-	time = time[:len(time)-1] // Remove the trailing newline
+	// fmt.Print("Enter Time: ")
+	// time, _ := reader.ReadString('\n')
+	// time = time[:len(time)-1] // Remove the trailing newline
 
-	// fmt.Println("City:", city)
-	// fmt.Println("Time:", time)
+	// input = callParsedata(city, time)
+	// output := getPrediction(input)
+	// print_output(output.Delay)
+	r := mux.NewRouter()
+	r.HandleFunc("/predict-delay", handlePredictDelay).Methods("POST")
 
-	input = callParsedata(city, time)
-	// fmt.Println(input)
+	// Handle CORS
+	handler := cors.Default().Handler(r)
 
-	output := getPrediction(input)
-	// fmt.Println(output)
-	print_output(output.Delay)
+	log.Println("Server is running on port 8080...")
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }

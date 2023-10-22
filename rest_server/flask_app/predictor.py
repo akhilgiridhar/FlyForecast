@@ -25,5 +25,6 @@ def get_prediction(dew, slp, tmp, vis, wind_speed):
 
     sample = np.array([[dew, slp, tmp, vis, wind_speed]])
     prediction = model.predict(sample)
+    print(prediction[0])
     return prediction[0]
 
