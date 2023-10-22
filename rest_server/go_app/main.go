@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os/exec"
 )
 
 type Input struct {
@@ -17,8 +18,38 @@ type Input struct {
 	Wnd_speed int `json:"wnd_speed"`
 }
 
+type api_params struct {
+	City string `json:"city"`
+	Time int    `json:"time"`
+}
+
 type Output struct {
 	Delay int `json:"delay"`
+}
+
+func callParsedata(city, time string) Input {
+	cmd := exec.Command("python", "inputparsing.py", "parsedata", time, city)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("Error executing Python script:", err)
+		return Input{}
+	}
+
+	// The output from the Python script is stored in 'out'
+	// Unmarshal the JSON data into the Go struct
+	pythonOutput := out.String()
+
+	// Unmarshal the JSON data into the Go struct
+	var input Input
+	err = json.Unmarshal([]byte(pythonOutput), &input)
+	if err != nil {
+		fmt.Println("Error unmarshaling JSON:", err)
+		return Input{}
+	}
+	return input
 }
 
 func getPrediction(data Input) Output {
@@ -46,15 +77,15 @@ func getPrediction(data Input) Output {
 	return Output{Delay: response["prediction"]}
 }
 
-func getValidIntInput(prompt string) int {
-	var value int
+func getValidIntInput(prompt string) string {
+	var value string
 	for {
 		fmt.Print(prompt)
 		_, err := fmt.Scanf("%d\n", &value)
 		if err == nil {
 			break
 		} else {
-			fmt.Println("Please enter a valid number.")
+			fmt.Println("Please enter a valid string.")
 		}
 	}
 	return value
@@ -62,12 +93,12 @@ func getValidIntInput(prompt string) int {
 
 func main() {
 	var input Input
+	// var api_params Params
+	var city, time string
+	city = getValidIntInput("Enter City: ")
+	time = getValidIntInput("Enter Time: ")
 
-	input.Dew = getValidIntInput("Dew: ")
-	input.Slp = getValidIntInput("Slp: ")
-	input.Tmp = getValidIntInput("Tmp: ")
-	input.Vis = getValidIntInput("Vis: ")
-	input.Wnd_speed = getValidIntInput("Wnd_speed: ")
+	input = callParsedata(city, time)
 
 	output := getPrediction(input)
 	if output.Delay == 0 {

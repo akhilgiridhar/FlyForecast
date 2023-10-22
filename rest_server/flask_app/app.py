@@ -7,8 +7,8 @@ app = Flask(__name__)
 def predict():
     data = request.json
     # print(data)
-    prediction = predictor.get_prediction(data['cig'], data['dew'], data['slp'], data['tmp'], data['vis'], data['wnd_speed'])     
-    return jsonify({"prediction": prediction})
+    # prediction = predictor.get_prediction(data['dew'], data['slp'], data['tmp'], data['vis'], data['wnd_speed'])     
+    # return jsonify({"prediction": prediction})
 
 if __name__ == '__main__':
     app.run(port=5001)

@@ -34,5 +34,5 @@ def parsedata(city, time):
     else:
         print(f"Request failed with status code: {response.status_code}")
 
-if __name__ == '__main__':
-    parsedata('New York', 17)
+# if __name__ == '__main__':
+#     parsedata('New York', 17)
