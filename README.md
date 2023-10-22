@@ -28,7 +28,7 @@ Other datasets can be used by creating a class which inherits from `torch.utils.
 ## Authors
 Created during the 2023 HackTX hackathon for team FlyForecast.
 - Akhil Giridhar
-- Rohain Jain
+- Rohan Jain
 - Jibran Cutlerywala
 - Boris He
 
