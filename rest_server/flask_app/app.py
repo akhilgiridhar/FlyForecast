@@ -6,7 +6,8 @@ app = Flask(__name__)
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
-    prediction = predictor.get_prediction(data['Cig'], data['Dew'], data['Slp'], data['Tmp'], data['Vis'], data['Wnd_speed'])     
+    # print(data)
+    prediction = predictor.get_prediction(data['cig'], data['dew'], data['slp'], data['tmp'], data['vis'], data['wnd_speed'])     
     return jsonify({"prediction": prediction})
 
 if __name__ == '__main__':

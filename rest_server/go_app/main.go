@@ -3,15 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Input struct {
-	Cig       int `json:"cig"`
 	Dew       int `json:"dew"`
 	Slp       int `json:"slp"`
 	Tmp       int `json:"tmp"`
@@ -48,19 +46,34 @@ func getPrediction(data Input) Output {
 	return Output{Delay: response["prediction"]}
 }
 
-func main() {
-	r := gin.Default()
-
-	r.POST("/predict", func(c *gin.Context) {
-		var input Input
-		if err := c.ShouldBindJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
+func getValidIntInput(prompt string) int {
+	var value int
+	for {
+		fmt.Print(prompt)
+		_, err := fmt.Scanf("%d\n", &value)
+		if err == nil {
+			break
+		} else {
+			fmt.Println("Please enter a valid number.")
 		}
+	}
+	return value
+}
 
-		output := getPrediction(input)
-		c.JSON(http.StatusOK, output)
-	})
+func main() {
+	var input Input
 
-	r.Run()
+	input.Dew = getValidIntInput("Dew: ")
+	input.Slp = getValidIntInput("Slp: ")
+	input.Tmp = getValidIntInput("Tmp: ")
+	input.Vis = getValidIntInput("Vis: ")
+	input.Wnd_speed = getValidIntInput("Wnd_speed: ")
+
+	output := getPrediction(input)
+	if output.Delay == 0 {
+		fmt.Println("No Delay")
+		return
+	} else {
+		fmt.Println("Delay")
+	}
 }
