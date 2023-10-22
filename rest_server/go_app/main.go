@@ -70,6 +70,14 @@ func callParsedata(city, time string) Input {
 	return result
 }
 
+func print_output(prediction int) {
+	if prediction == 0 {
+		fmt.Println("No Delay")
+	} else {
+		fmt.Println("Delay")
+	}
+}
+
 func getPrediction(data Input) Output {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
@@ -114,10 +122,5 @@ func main() {
 	fmt.Println(input)
 
 	output := getPrediction(input)
-	if output.Delay == 0 {
-		fmt.Println("No Delay")
-		return
-	} else {
-		fmt.Println("Delay")
-	}
+	print_output(output.Delay)
 }
