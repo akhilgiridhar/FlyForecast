@@ -4,7 +4,7 @@ Created at HackTX 2023
 
 Winner of best Use of Hedera
 
-Our web application uses ML to predict whether a particular flight will be delayed or not. We use custom REST APIs developed in Flask to interface with the model as well as APIs from weather sites to make predictions for a particular flight. In addition to the ML model, we also use Hedera for model provenance tracking. This creates a public ledger of the model's dataset, hyperparameters, training information, and creators, enabling greater transparency and ensuring that any bias or misuse of data can be seen by the public. We use React.js for the front end.
+Our web application uses ML to predict whether a particular flight will be delayed or not based on weather data such as air temperature, visibility, windspeed, and cloud cover. We use custom REST APIs developed in Flask to interface with the model as well as APIs from weather sites to make predictions for a particular flight. In addition to the ML model, we also use Hedera for model provenance tracking. This creates a public ledger of the model's dataset, hyperparameters, training information, and creators, enabling greater transparency and ensuring that any bias or misuse of data can be seen by the public. We use React.js for the front end.
 
 ## Initial Setup
 
