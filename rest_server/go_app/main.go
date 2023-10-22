@@ -72,9 +72,9 @@ func callParsedata(city, time string) Input {
 
 func print_output(prediction int) {
 	if prediction == 0 {
-		fmt.Println("No Delay")
+		fmt.Println("Your flight has a high chance of being on time")
 	} else {
-		fmt.Println("Delay")
+		fmt.Println("Your flight has a high chance of being delayed")
 	}
 }
 
@@ -115,12 +115,13 @@ func main() {
 	time, _ := reader.ReadString('\n')
 	time = time[:len(time)-1] // Remove the trailing newline
 
-	fmt.Println("City:", city)
-	fmt.Println("Time:", time)
+	// fmt.Println("City:", city)
+	// fmt.Println("Time:", time)
 
 	input = callParsedata(city, time)
-	fmt.Println(input)
+	// fmt.Println(input)
 
 	output := getPrediction(input)
+	// fmt.Println(output)
 	print_output(output.Delay)
 }
