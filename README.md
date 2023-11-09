@@ -1,6 +1,12 @@
 # FlyForecast
 Created at HackTX 2023
 
+## Authors
+Created during the 2023 HackTX hackathon for team FlyForecast.
+- Akhil Giridhar
+- Rohan Jain
+- Jibran Cutlerywala
+- Boris He
 
 Winner of best Use of Hedera
 
@@ -23,11 +29,3 @@ Other datasets can be used by creating a class which inherits from `torch.utils.
 `predictor.py` contains functions necessary to train the model.
 
 `main.py` runs the selected model in real-time, taking inputs for location and time from the UI built in React.js.
-
-## Authors
-Created during the 2023 HackTX hackathon for team FlyForecast.
-- Akhil Giridhar
-- Rohan Jain
-- Jibran Cutlerywala
-- Boris He
-
